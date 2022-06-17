@@ -1,0 +1,20 @@
+一開始處理input.txt ->inst_type用來儲存inst的類型(ADD、MUL)
+		         ->inst_reg用來儲存inst的三個參數(F1,F2,F3)
+
+先建立一個cycle(time_table)表來記錄何時要issue、dispatch、write_back，並計算其值，這邊要留意是否會有RAW的情況發生，要多做RAW處理
+(我假設ADD/SUB會執行2個cycle、MUL執行10個cycle、DIV執行40個cycle)
+
+將要輸出的cycle_status設成true，並分別執行
+
+issue->
+找到要執行issue的inst，先判斷它的type(ADD、ADDI、SUB、MUL、DIV)，分別去看RS是否有空間可放，如果有就將其sign、R1、R2放入，將RS_status設成true，並在RAT紀錄是放在哪個RS，其RAT_status設成true
+
+dispatch->
+查看是否有可以dispatch的inst，如果有就分別存放在RS_add_buffer、RS_mul_buffer
+
+write_back->
+如果有可以write_back的inst，先判斷它的sign(+-*/)，再分別去計算，計算完的結果要去看其他RS中有沒有要這個數字的，然後將其RAT刪除，最後清空該個RS
+
+根據題目規定的格式分別輸出第幾個Cycle、RF表格、RAT表格、RS表格跟buffer，這邊判斷如果RS_add_buffer、RS_mul_buffer為空字串，就設成empty在輸出
+
+當最後一個cycle結束，就整個end
